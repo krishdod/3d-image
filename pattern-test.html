@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AR Pattern Test (Hiro)</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      .note { position: fixed; top: 10px; left: 10px; right: 10px; color: #fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; z-index: 10; }
+      .note a { color: #34d399; }
+    </style>
+  </head>
+  <body>
+    <div class="note">
+      Test with the Hiro marker. Print or show this marker: 
+      <a href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/three.js/examples/marker-training/examples/pattern-files/pattern-hiro.png" target="_blank" rel="noopener">pattern-hiro.png</a>
+    </div>
+    <a-scene embedded arjs="debugUIEnabled: true; sourceType: webcam;">
+      <a-marker type="pattern" url="https://raw.githubusercontent.com/AR-js-org/AR.js/master/three.js/examples/marker-training/examples/pattern-files/pattern-hiro.patt">
+        <a-box position="0 0.5 0" material="color: #4ade80"></a-box>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+  </html>
+
+

@@ -40,10 +40,14 @@
       vr-mode-ui="enabled: false"
       embedded
       renderer="colorManagement: true; physicallyCorrectLights: true"
-      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;">
+      arjs="trackingMethod: best; sourceType: webcam; 
+            videoConstraints: { facingMode: { ideal: 'environment' } };
+            sourceWidth: 1280; sourceHeight: 720; 
+            displayWidth: 1280; displayHeight: 720; 
+            debugUIEnabled: false;">
 
       <a-assets timeout="12000">
-        <video id="vid" src="video.mp4" preload="auto" crossorigin="anonymous" webkit-playsinline playsinline></video>
+        <video id="vid" src="video.mp4" preload="auto" autoplay muted crossorigin="anonymous" webkit-playsinline playsinline></video>
       </a-assets>
 
       <!-- Photo marker -->

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NFT Debug</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar-nft.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      #status { position: fixed; bottom: 10px; left: 10px; right: 10px; color: #fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; z-index: 10; }
+    </style>
+  </head>
+  <body>
+    <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;">
+      <a-nft id="nft" type="nft" url="marker/photo" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
+        <a-box position="0 0.5 0" color="#60a5fa"></a-box>
+      </a-nft>
+      <a-entity camera></a-entity>
+    </a-scene>
+    <div id="status">Waiting for marker...</div>
+    <script>
+      const nft = document.getElementById('nft');
+      const status = document.getElementById('status');
+      nft.addEventListener('markerFound', () => status.textContent = 'Marker FOUND');
+      nft.addEventListener('markerLost', () => status.textContent = 'Marker LOST');
+    </script>
+  </body>
+  </html>
+
+
