@@ -36,6 +36,12 @@
       <button id="startBtn">Tap to start AR</button>
     </div>
 
+    <div id="zoom-controls" style="position:fixed;right:10px;bottom:10px;z-index:10000;display:none;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;">
+      <button id="zoomOut" style="padding:6px 10px;margin-right:6px;border-radius:6px;border:none;background:#111;color:#fff;">-</button>
+      <input id="zoomRange" type="range" min="1" max="1" step="0.1" value="1" style="vertical-align:middle;">
+      <button id="zoomIn" style="padding:6px 10px;margin-left:6px;border-radius:6px;border:none;background:#111;color:#fff;">+</button>
+    </div>
+
     <a-scene
       vr-mode-ui="enabled: false"
       embedded
@@ -118,6 +124,72 @@
 
         markerEl.addEventListener('markerFound', onMarkerFound);
         markerEl.addEventListener('markerLost', onMarkerLost);
+      })();
+    </script>
+    <script>
+      // Camera zoom controls using MediaTrackCapabilities (when supported)
+      (function setupZoomControls(){
+        const controls = document.getElementById('zoom-controls');
+        const range = document.getElementById('zoomRange');
+        const btnIn = document.getElementById('zoomIn');
+        const btnOut = document.getElementById('zoomOut');
+
+        function getTrack(){
+          const vid = document.querySelector('video');
+          if (!vid || !vid.srcObject) return null;
+          const tracks = vid.srcObject.getVideoTracks ? vid.srcObject.getVideoTracks() : [];
+          return tracks && tracks[0] ? tracks[0] : null;
+        }
+
+        async function init(){
+          // Wait for AR.js to attach the stream
+          let tries = 0;
+          while(tries < 50 && !getTrack()){
+            await new Promise(r=>setTimeout(r,100));
+            tries++;
+          }
+          const track = getTrack();
+          if(!track || !track.getCapabilities){ return; }
+          const caps = track.getCapabilities();
+          if(!caps || typeof caps.zoom === 'undefined'){ return; }
+          const settings = track.getSettings ? track.getSettings() : {};
+          const min = caps.zoom.min || 1;
+          const max = caps.zoom.max || 5;
+          const step = caps.zoom.step || 0.1;
+          const cur = settings.zoom || min;
+          range.min = String(min);
+          range.max = String(max);
+          range.step = String(step);
+          range.value = String(cur);
+          controls.style.display = 'block';
+
+          async function apply(val){
+            try {
+              await track.applyConstraints({ advanced: [{ zoom: val }] });
+            } catch(e) {
+              // ignore if device rejects
+            }
+          }
+
+          range.addEventListener('input', ()=> apply(parseFloat(range.value)));
+          btnIn.addEventListener('click', ()=>{
+            const v = Math.min(parseFloat(range.max), parseFloat(range.value) + parseFloat(range.step));
+            range.value = String(v);
+            apply(v);
+          });
+          btnOut.addEventListener('click', ()=>{
+            const v = Math.max(parseFloat(range.min), parseFloat(range.value) - parseFloat(range.step));
+            range.value = String(v);
+            apply(v);
+          });
+        }
+
+        // Kick off after page load
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          init();
+        } else {
+          window.addEventListener('DOMContentLoaded', init);
+        }
       })();
     </script>
   </body>
