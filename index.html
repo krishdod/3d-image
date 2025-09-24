@@ -53,7 +53,7 @@
             debugUIEnabled: false;">
 
       <a-assets timeout="12000">
-        <video id="vid" src="video.mp4" preload="auto" autoplay muted crossorigin="anonymous" webkit-playsinline playsinline></video>
+        <video id="vid" src="video.mp4" preload="auto" muted crossorigin="anonymous" webkit-playsinline playsinline></video>
       </a-assets>
 
       <!-- Photo marker -->
@@ -85,24 +85,12 @@
         const startBtn = document.getElementById('startBtn');
         const videoEl = document.getElementById('vid');
         const markerEl = document.getElementById('photoMarker');
+        let userGestured = false;
 
         // Ensure Safari/iOS can start playback with sound after a user gesture
         function unlockAndHide() {
-          // Try to play once muted, then unmute
-          const tryPlay = async () => {
-            try {
-              videoEl.muted = false; // we want audio
-              await videoEl.play();
-            } catch (e) {
-              // Fallback: start muted, then unmute on markerFound
-              try {
-                videoEl.muted = true;
-                await videoEl.play();
-              } catch (_) {}
-            }
-            startOverlay.style.display = 'none';
-          };
-          tryPlay();
+          userGestured = true;
+          startOverlay.style.display = 'none';
         }
 
         startBtn.addEventListener('click', unlockAndHide, { once: true });
@@ -110,6 +98,7 @@
 
         // Pause/play with marker visibility
         function onMarkerFound() {
+          if (!userGestured) return;
           // Unmute when marker is found (after user gesture already happened)
           videoEl.muted = false;
           if (videoEl.paused) {
