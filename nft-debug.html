@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>NFT Debug</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar-nft.js"></script>
@@ -12,7 +12,7 @@
     </style>
   </head>
   <body>
-    <a-scene embedded arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;">
+    <a-scene embedded vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: true" renderer="alpha: true; antialias: true" arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;">
       <a-nft id="nft" type="nft" url="marker/photo" smooth="true" smoothCount="10" smoothTolerance="0.01" smoothThreshold="5">
         <a-box position="0 0.5 0" color="#60a5fa"></a-box>
       </a-nft>
@@ -24,8 +24,21 @@
       const status = document.getElementById('status');
       nft.addEventListener('markerFound', () => status.textContent = 'Marker FOUND');
       nft.addEventListener('markerLost', () => status.textContent = 'Marker LOST');
+
+      window.addEventListener('arjs-video-loaded', () => {
+        status.textContent = 'Camera ready. Point at the marker';
+      });
+
+      window.addEventListener('arjs-nft-loaded', () => {
+        status.textContent = 'NFT loaded. Point at the marker';
+      });
+
+      window.addEventListener('arjs-error', (e) => {
+        status.textContent = 'AR error: ' + (e && e.detail ? e.detail : 'Unknown error');
+      });
     </script>
   </body>
   </html>
+
 
 
